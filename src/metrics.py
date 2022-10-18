@@ -1,15 +1,13 @@
 #!/usr/local/bin/python
-import tensorflow as tf
+import torch
 import numpy as np
 import math
-
 
 def n_accurate(y, y_):
     """
         y, y_: Tensor, shape: [batch_size, y_size];
     """
-    correct_y_batch = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-    n_accurate = tf.reduce_sum(tf.cast(correct_y_batch, tf.float32))  # similar to numpy.count_nonzero()
+    n_accurate = torch.sum((torch.argmax(y,1)==torch.argmax(y_,1)).float())
     return n_accurate
 
 
@@ -18,10 +16,8 @@ def eval_acc(n_acc, total):
 
 
 def create_confusion_matrix(y, y_, is_distribution=True):
-    """
-        By batch. shape: [n_batch, batch_size, y_size]
-    """
-    n_samples = float(y_.shape[0])   # get dimension list
+
+    n_samples = y_.shape[0] # get dimension list
     if is_distribution:
         label_ref = np.argmax(y_, 1)  # 1-d array of 0 and 1
         label_hyp = np.argmax(y, 1)
